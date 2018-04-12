@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load cache %}
+
+{% block body_class %}onecol{% endblock %}
+{% block body_style %}home{% endblock %}
+
+{% block title %}Explore European Common Agricultural Policy farm subsidy payments{% endblock %}
+
+{% block content %}
+
+    <h1>Welcome to farmsubsidy.org</h1>
+    <p class="lead">
+        The European Union spends around €59 billion a year on farm subsidies.<br/>
+        This site tells you who receives the money.
+    </p>
+
+    <iframe src="//player.vimeo.com/video/6184633" width="100%" height="352" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+
+
+    <h2>Official Sources</h2>
+
+    <p>Official sources on the CAP/European agricultural policy.</p>
+    <p>
+        <ul>
+            <li><a href="http://ec.europa.eu/agriculture/index_en.htm" target="_blank">European Commission - Agriculture and Rural Development</a></li>
+            <li><a href="http://europa.eu/pol/agr/index_en.htm" target="_blank">European Union - Agriculture</a></li>
+        </ul>
+    </p>
+
+     <h2>Basic Information</h2>
+     <p>Some basic information to start reading.</p>
+
+     <p>
+        <ul>
+            <li><a href="http://en.wikipedia.org/wiki/Common_Agricultural_Policy" target="_blank">Wikipedia - Common Agricultural Policy (CAP)</a></li>
+            <li><a href="https://www.google.de/search?tbm=nws&q=EU+Farm+Subsidies" target="_blank">Google News Search - &quot;EU Farm Subsidies&quot;</a></li>
+        </ul>
+     </p>
+
+{% endblock %}
+
+
+{% block right %}
+    {% if top_eu %}
+        <div class="sidebar-widget">
+            <h3>All Time Top Recipients</h3>
+            <ul class="list-unstyled">
+                {% for r in top_eu %}
+                    <li>
+                      <a href="{{ r.get_absolute_url }}">{{ r.name }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    <div class="sidebar-widget">
+        <h3>Browse by country</h3>
+        <ul class="list-unstyled">
+        {% for country in countries %}
+          <li>
+            <a href="{% url 'country' country.code %}">{{ country.name }}</a>
+          </li>
+        {% endfor %}
+        </ul>
+    </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,175 @@
+{% load i18n %}{% load cache %}{% load static %}{% load humanize %}<!DOCTYPE html>
+<html lang="en">
+  <head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>{% block title %}{{ title }}{% endblock %} | FarmSubsidy.org</title>
+
+    <meta name="description" content="FarmSubsidy shows who gets subsidies under the European Common Agricultural Policy">
+    <meta name="author" content="">
+
+    {% block extrameta %}{% endblock %}
+
+    <meta name="google-site-verification" content="hyG2KNMuw7MW6cT7ImXaOIJ44j9YW6PJPh0M-_4lv8U" />
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/farmsubsidy.css' %}"/>
+
+    <script src="{% static 'js/jquery.js' %}"></script>
+</head>
+
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="the-cow">
+            <a href="/">
+              <img src="{% static 'images/logo-cow.png' %}" alt="FarmSubsidy Euro Cow"/>
+            </a>
+          </div>
+        </div>
+        <div class="col-md-6 search-form">
+          <form action="{% url 'search' %}" method="get" accept-charset="utf-8">
+
+            <div class="input-group">
+              <input type="text" name="q" value="{{ q }}" id="q" placeholder="Enter a company name or place" class="form-control input-lg">
+              <span class="input-group-btn">
+                <button class="btn btn-fs-search input-lg" type="submit">Search</button>
+              </span>
+            </div>
+            <small class="search-examples">
+              e.g. <a href="{% url 'search' %}?q=nestle">Nestle</a> or <a href="{% url 'search' %}?q=windsor">Windsor</a>
+            </small>
+          </form>
+        </div>
+      </div>
+      <div class="row">
+        <div class="navbar navbar-fs" role="navigation">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">
+              <strong>FarmSubsidy</strong>.org
+            </a>
+          </div>
+          <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+              <li{% block nav_countries %}{% endblock %}>
+                <a href="{% url 'countries' %}">Countries</a>
+              </li>
+              <li{% if flatpage.url == '/faq/' %} class="active"{% endif %}>
+                <a href="/faq/">FAQ</a>
+              </li>
+              <li>
+                <a class="twitter" href="https://twitter.com/farmsubsidy/">
+                  <img src="{% static 'images/twitter_logo.png' %}" alt="Twitter Bird"/>
+                </a>
+              </li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+  </header>
+  <main class="container">
+    <div class="row content-row">
+      <div class="content col-lg-8 col-md-8 col-sm-7">
+        <div class="heading">
+          <p class="breadcrumbs">
+            {% block breadcrumb %}{% endblock %}
+          </p>
+          <h2>
+            {% block page_title %}{% endblock %}
+          </h2>
+        </div>
+
+        {% block error %}{% endblock %}
+
+        {% block content %}{% endblock %}
+
+      </div>
+
+      <div class="sidebar col-lg-4 col-md-4 col-sm-5">
+        <div class="right">
+          {% block right %}
+          {% endblock %}
+          <div class="sidebar-widget">
+            <div class="text-center">
+                <a href="https://openspending.org">
+                    <img class="img-responsive" src="{% static 'images/openspending.png' %}" alt="OpenSpending"/>
+                </a>
+                <br/>
+                <a href="http://journalismfund.eu/">
+                    <img class="img-responsive" src="{% static 'images/journalismfundeu.png' %}" alt="JournalimFund.eu"/>
+                </a>
+            </div>
+            <p>
+                FarmSubsidy.org is a project of <a href="http://journalismfund.eu/">Journalismfund.eu</a>, a non-profit organisation, and powered by <a href="https://openspending.org">OpenSpending</a> of <a href="https://okfn.org">Open Knowledge</a>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <div class="footer">
+    <div class="container">
+      <div class="row">
+        {% block footer %}
+          <div class="col-lg-3 col-lg-offset-1 col-md-4 col-sm-4">
+            <h5>Looking for more information?</h5>
+            <ul class="list-unstyled">
+              <li><a href="/legal">Legal / Privacy Policy</a></li>
+              <li><a href="/about">About us</a></li>
+            </ul>
+          </div>
+          <div class="col-lg-3 col-lg-offset-1 col-md-4 col-sm-4">
+            <h5>Get in touch:</h5>
+            <ul class="list-unstyled">
+              <li><a href="mailto:farmsubsidy[-at-]openspending[-dot-]org">Email</a></li>
+              <li>
+                <a href="https://twitter.com/farmsubsidy">Twitter</a>
+              </li>
+            </ul>
+          </div>
+          <div class="col-lg-3 col-lg-offset-1 col-md-4 col-sm-4">
+            <h5>Technical</h5>
+            <ul class="list-unstyled">
+              <li><a href="https://github.com/openspending/Farm-Subsidy">Get the code</a></li>
+              <li><a href="http://data.farmsubsidy.org/index.html">Get the raw data</a> |
+                <a href="https://docs.google.com/spreadsheet/ccc?key=0Ajagl3TOC7X_dFlzQ0ljaUxUWVNmNE40TGdweWNlcEE&hl=en#gid=7">Spreadsheet</a></li>
+              {# <li><a href="/api/">API</a></li> #}
+            </ul>
+          </div>
+        {% endblock %}
+      </div>
+    </div>
+  </div>
+
+{% block analytics %}
+  {% if not debug %}
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-33874954-17', 'openspending.org');
+      ga('send', 'pageview');
+    </script>
+  {% endif %}
+{% endblock analytics %}
+
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+{% block footer_scripts %}{% endblock %}
+
+</body>
+</html>

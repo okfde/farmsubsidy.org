@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}
+    All Schemes
+{% endblock %}
+
+{% block page_title %}
+    All Schemes
+{% endblock %}
+
+{% block content %}
+  
+  {% load pagination_tags %}
+  {% autopaginate schemes 30 %}
+  
+  <table class="table">
+    <thead>
+      <th>Name</th>
+      <th class="money">Total (all years)</th>
+    </thead>
+    <tbody>
+      {% for scheme in schemes %}
+      <tr>
+        <td><a href="{{ scheme.get_absolute_url }}">{{ scheme.nameenglish }}</a></td>
+        <td class="money">&euro;{{ scheme.total|floatformat:0|intcomma }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <h4 class="pager">{% paginate %}</h4>
+
+
+{% endblock %}
+
+{% block right %}
+  {% include "breadcrumbs.html" %}
+{% endblock %}

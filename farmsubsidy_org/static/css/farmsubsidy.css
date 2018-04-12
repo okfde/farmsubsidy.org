@@ -1,0 +1,149 @@
+body {
+  background-color: #f6f6f6;
+  margin:0;
+  padding:0;
+}
+
+a, a:hover {
+  color: #51B580;
+}
+
+
+.btn-fs-search,
+.btn-fs-search:hover {
+  color: #fff;
+  background-color: #139744;
+}
+
+.header {
+  background: url('../images/header.jpg');
+  background-size: cover;
+}
+
+.tagline {
+  color: #fff;
+  font-size: 24px;
+  text-shadow: 1px 1px 1px #000;
+  padding: 10px;
+}
+
+.search-form {
+  padding: 10rem 0 2rem;
+}
+
+.search-form .search-examples {
+  color: #fff;
+  margin-left: 20px;
+  text-shadow: 1px 1px 1px #000;
+}
+
+.search-form .search-examples > a {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.the-cow {
+  display: none;
+}
+
+.navbar-fs .navbar-brand {
+  background: url('../images/logo-cow-small.png') left center no-repeat;
+  padding-left: 65px;
+}
+
+
+@media (min-width: 992px) {
+
+  .navbar-fs .navbar-brand {
+    padding-left: 15px;
+    background: none;
+  }
+
+  .the-cow {
+    display: block;
+    width: 220px;
+    height: 220px;
+    position: relative;
+    bottom: -80px;
+    background-color: #139744;
+    border-radius: 150px;
+  }
+
+  .the-cow img {
+    position: absolute;
+    top: 30px;
+    left: 20px;
+    z-index: 100;
+  }
+
+}
+
+.navbar-fs {
+  background-color: #139744;
+  border: 0;
+  margin: 0;
+  border-radius: 0;
+  padding: 0 10px;
+}
+
+.navbar-fs .navbar-nav>li>a {
+  color: #fff;
+}
+
+.nav>li>a:hover, .nav>li>a:focus, .nav>li.active>a {
+  color: #fff;
+  background-color: #333;
+}
+
+.navbar-fs .navbar-brand {
+  color: #fff;
+  font-size: 26px;
+}
+
+.navbar-toggle .icon-bar {
+  background-color: #fff;
+}
+
+.content-row {
+  background-color: #fff;
+}
+
+.content {
+  padding: 0 20px;
+  background-color: #fff;
+}
+
+.sidebar {
+  background-color: #eee;
+}
+
+.right {
+  padding-top: 15px;
+  background-color: #eee;
+}
+
+.sidebar-widget {
+  background-color: #fff;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 2px
+}
+
+.sidebar-widget h3 {
+  margin-top: 0;
+}
+
+.footer {
+  padding: 30px 0;
+  background-color: #161614;
+  border-top: 8px #139744 solid;
+  color: #C6C6C4;
+}
+
+.footer a {
+  color: #C6C6C4;
+}
+
+.money {
+  text-align: right;
+}
