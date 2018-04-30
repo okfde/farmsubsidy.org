@@ -53,35 +53,28 @@
           </form>
         </div>
       </div>
-      <div class="row">
-        <div class="navbar navbar-fs" role="navigation">
-          <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-              <span class="sr-only">Toggle navigation</span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="/">
-              <strong>FarmSubsidy</strong>.org
-            </a>
-          </div>
-          <div class="navbar-collapse collapse">
-            <ul class="nav navbar-nav navbar-right">
-              <li{% block nav_countries %}{% endblock %}>
-                <a href="{% url 'countries' %}">Countries</a>
-              </li>
-              <li{% if flatpage.url == '/faq/' %} class="active"{% endif %}>
-                <a href="/faq/">FAQ</a>
-              </li>
-              <li>
-                <a class="twitter" href="https://twitter.com/farmsubsidy/">
-                  <img src="{% static 'images/twitter_logo.png' %}" alt="Twitter Bird"/>
-                </a>
-              </li>
-            </ul>
-          </div><!--/.nav-collapse -->
-        </div>
+      <div class="navbar navbar-dark navbar-expand-sm navbar-fs" role="navigation">
+        <a class="navbar-brand" href="/">
+          <strong>FarmSubsidy</strong>.org
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#menu" aria-controls="menu" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="navbar-collapse collapse" id="menu">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item {% block nav_countries %}{% endblock %}">
+              <a class="nav-link" href="{% url 'countries' %}">Countries</a>
+            </li>
+            <li class="nav-item {% if flatpage.url == '/faq/' %}active{% endif %}">
+              <a class="nav-link" href="/faq/">FAQ</a>
+            </li>
+            <li>
+              <a class="nav-link twitter" href="https://twitter.com/farmsubsidy/">
+                <img src="{% static 'images/twitter_logo.png' %}" alt="Twitter Bird"/>
+              </a>
+            </li>
+          </ul>
+        </div><!--/.nav-collapse -->
       </div>
     </div>
   </header>
@@ -110,11 +103,11 @@
           <div class="sidebar-widget">
             <div class="text-center">
                 <a href="https://openspending.org">
-                    <img class="img-responsive" src="{% static 'images/openspending.png' %}" alt="OpenSpending"/>
+                    <img class="img-fluid" src="{% static 'images/openspending.png' %}" alt="OpenSpending"/>
                 </a>
                 <br/>
                 <a href="http://journalismfund.eu/">
-                    <img class="img-responsive" src="{% static 'images/journalismfundeu.png' %}" alt="JournalimFund.eu"/>
+                    <img class="img-fluid" src="{% static 'images/journalismfundeu.png' %}" alt="JournalimFund.eu"/>
                 </a>
             </div>
             <p>
