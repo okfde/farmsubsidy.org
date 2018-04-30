@@ -1,0 +1,13 @@
+version: "2"
+
+services:
+  backend:
+    build: .
+    command: "pipenv run gunicorn -w 4 -b 0.0.0.0:8040 --name farmsubsidy_gunicorn \
+      --log-level info --log-file /var/log/gunicorn.log farmsubsidy_org.wsgi:application"
+    volumes:
+      - ./logs/:/var/log/
+    ports:
+      - 127.0.0.1:8040:8040
+    env_file:
+      - farmsubsidy.env
