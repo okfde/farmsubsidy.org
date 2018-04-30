@@ -12,6 +12,7 @@ whitenoise = "*"
 gunicorn = "*"
 dj-database-url = "*"
 "psycopg2" = "*"
+elasticsearch-dsl = "*"
 
 
 [dev-packages]
