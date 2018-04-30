@@ -2,4 +2,4 @@ __pycache__
 *.pyc
 *.pyo
 *.env
-node_modules
+logs/
