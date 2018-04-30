@@ -32,8 +32,11 @@ SECRET_KEY = env('DJANGO_SECRET_KEY', 'secret')
 DEBUG = env('DJANGO_DEBUG', '1') == '1'
 
 ALLOWED_HOSTS = []
+if not DEBUG:
+    ALLOWED_HOSTS = [
+        'farmsubsidy.org', 'farmsubsidy.openspending.org', 'localhost'
+    ]
 
-ALLOWED_HOSTS = []
 INTERNAL_IPS = ['127.0.0.1']
 
 # Application definition
