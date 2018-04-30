@@ -12,6 +12,7 @@ django = "*"
 
 [dev-packages]
 
+django-debug-toolbar = "*"
 
 
 [requires]
