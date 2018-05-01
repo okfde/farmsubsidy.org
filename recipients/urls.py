@@ -1,8 +1,12 @@
-from django.urls import re_path
+from django.urls import re_path, path, include
 
 from .models import COUNTRY_CODES
-from .views import (home, countries, country, recipient_short, recipient,
-    all_schemes, scheme, browse, search)
+from .views import (
+    home,
+    countries, country,
+    recipient_short, recipient,
+    search
+)
 
 
 def country_url(pattern, *args, **kwargs):
@@ -22,23 +26,7 @@ urlpatterns = [
     country_url(r'$', country, name='country'),
     country_url(r'(?P<year>\d+)/$', country, name='country_year'),
     country_url(r'recipient/(?P<recipient_id>[^/]+)/$', recipient_short, name='recipient_short_view'),
-    country_url(r'recipient/(?P<recipient_id>[^/]+)/(?P<name>(.*))/', recipient, name='recipient_view'),
+    country_url(r'recipient/(?P<recipient_id>[^/]+)/(?P<slug>(.*))/', recipient, name='recipient_view'),
+    path('', include('django.contrib.flatpages.urls')),
 
-    # Locations
-    # country_url(r'location/(?P<year>\d+)/(?P<slug>([^\d]+))/$', location, name='location_view'),
-    # country_url(r'location/(?P<slug>([^\d]+))/$', location, name='location_view' ),
-
-    # country_url(r'location/(?P<year>\d+)/$', all_locations, name='all_locations'),
-    # country_url(r'location/$', all_locations, name='all_locations' ),
-
-    # Schemes
-    country_url(r'scheme/$', all_schemes, name='all_schemes'),
-    country_url(r'scheme/(?P<globalschemeid>[^/]+)/(?P<name>(.*))/(?P<year>(\d+))/', scheme, name='scheme_view'),
-    country_url(r'scheme/(?P<globalschemeid>[^/]+)/(?P<name>(.*))/', scheme, name='scheme_view'),
-
-
-    country_url(r'browse/', browse, name='browse'),
-    country_url(r'browse/(?P<browse_type>(recipient|scheme|location))/(?P<year>\d+)/(?P<sort>(amount|name))', browse, name='browse'),
-    country_url(r'browse/(?P<browse_type>(recipient|scheme|location))', browse,
-        name='browse_default'),
 ]
