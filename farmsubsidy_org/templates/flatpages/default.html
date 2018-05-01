@@ -2,9 +2,10 @@
 
 {% block title %}{{ flatpage.title }}{% endblock%}
 
+{% block page_title %}<h1>{{ flatpage.title }}</h1>{% endblock %}
 
 {% block content %}
-<h2>{{ flatpage.title }}</h2>
+
 {{ flatpage.content }}
 
 {% endblock%}
