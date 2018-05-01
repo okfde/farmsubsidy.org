@@ -13,6 +13,7 @@ gunicorn = "*"
 dj-database-url = "*"
 "psycopg2" = "*"
 elasticsearch-dsl = "*"
+python-slugify = "*"
 
 
 [dev-packages]
