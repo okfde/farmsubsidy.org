@@ -1,4 +1,4 @@
-{% load i18n %}{% load cache %}{% load static %}{% load humanize %}<!DOCTYPE html>
+{% load cache %}{% load static %}{% load humanize %}<!DOCTYPE html>
 <html lang="en">
   <head>
 
@@ -42,7 +42,7 @@
         <div class="col-md-6 search-form">
           <form action="{% url 'search' %}" method="get" accept-charset="utf-8">
             <div class="input-group">
-              <input type="text" name="q" value="{{ q }}" id="q" placeholder="Enter a company name or place" class="form-control input-lg">
+              <input type="text" name="q" value="{{ query }}" id="q" placeholder="Enter a company name or place" class="form-control input-lg">
               <span class="input-group-btn">
                 <button class="btn btn-fs-search input-lg" type="submit">Search</button>
               </span>
@@ -78,47 +78,39 @@
       </div>
     </div>
   </header>
-  <main class="container">
-    <div class="row content-row">
-      <div class="content col-lg-8 col-md-8 col-sm-7">
-        <div class="heading">
-          <p class="breadcrumbs">
-            {% block breadcrumb %}{% endblock %}
-          </p>
-          <h2>
+  <main class="main">
+    <div class="container">
+      <div class="row content-row">
+        <div class="content col-lg-8 col-md-8 col-sm-7">
+          <header class="page-heading">
             {% block page_title %}{% endblock %}
-          </h2>
+          </header>
+          {% block error %}{% endblock %}
+
+          {% block content %}{% endblock %}
+
         </div>
 
-        {% block error %}{% endblock %}
-
-        {% block content %}{% endblock %}
-
-      </div>
-
-      <div class="sidebar col-lg-4 col-md-4 col-sm-5">
-        <div class="right">
-          {% block right %}
-          {% endblock %}
-          <div class="sidebar-widget">
-            <div class="text-center">
-                <a href="https://openspending.org">
-                    <img class="img-fluid" src="{% static 'images/openspending.png' %}" alt="OpenSpending"/>
-                </a>
-                <br/>
-                <a href="http://journalismfund.eu/">
-                    <img class="img-fluid" src="{% static 'images/journalismfundeu.png' %}" alt="JournalimFund.eu"/>
-                </a>
+        <div class="sidebar col-lg-4 col-md-4 col-sm-5">
+          <div class="right">
+            {% block right %}
+            {% endblock %}
+            <div class="sidebar-widget">
+              <div class="text-center">
+                  <a href="https://okfn.de">
+                    <img class="img-fluid" src="{% static 'images/okfde.svg' %}" alt="Open Knowledge Foundation Germany"/>
+                  </a>
+              </div>
+              <p>
+                  FarmSubsidy.org is a project of the <a href="https://okfn.de">Open Knowledge Foundation Germany</a>, a non-profit organisation working on transparency of public money.
+              </p>
             </div>
-            <p>
-                FarmSubsidy.org is a project of <a href="http://journalismfund.eu/">Journalismfund.eu</a>, a non-profit organisation, and powered by <a href="https://openspending.org">OpenSpending</a> of <a href="https://okfn.org">Open Knowledge</a>.
-            </p>
           </div>
         </div>
       </div>
     </div>
   </main>
-  <div class="footer">
+  <footer class="footer">
     <div class="container">
       <div class="row">
         {% block footer %}
@@ -130,7 +122,7 @@
             </ul>
           </div>
           <div class="col-lg-3 col-lg-offset-1 col-md-4 col-sm-4">
-            <h5>Get in touch:</h5>
+            <h5>Get in touch</h5>
             <ul class="list-unstyled">
               <li><a href="mailto:farmsubsidy[-at-]openspending[-dot-]org">Email</a></li>
               <li>
@@ -150,7 +142,7 @@
         {% endblock %}
       </div>
     </div>
-  </div>
+  </footer>
 {% block footer_scripts %}
   <script src="{% static 'js/jquery.js' %}"></script>
   <script src="{% static 'js/bootstrap.min.js' %}"></script>

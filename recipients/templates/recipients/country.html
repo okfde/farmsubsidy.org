@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% load humanize %}
+
+{% block title %}
+  {{ country.name }}
+{% endblock %}
+
+{% block page_title %}
+  <h2>
+    EU Farm subsidies for {{ country.name }}
+    <br/><small>{% if selected_year %} in {{ selected_year }}{% else %} for all available years{% endif %}</small>
+  </h2>
+{% endblock %}
+
+{% block content %}
+  <p>
+      These pages list farm subsidy payments made in {{ country.name }} as published directly by the government of {{ country.name }} or sourced via freedom of information requests.
+  </p>
+
+{% if years %}
+    <div class="year_selector section">
+    Show subsidies for
+    {% if not selected_year %}
+        <span class="selected">All Years</span>
+    {% else %}
+        <a href="{% url 'country' country=country.code %}" class="selected">
+          All Years
+        </a>
+    {% endif %}
+
+    {% for year in years %}
+        {% if year.year == selected_year  %}
+            <strong>{{ year.year }}</strong>
+        {% else %}
+            {% url 'country_year' country=country.code year=year.year as year_url %}
+            <a href="{{ year_url }}">{{ year.year }}</a>
+        {% endif %}
+    {% endfor %}
+    </div>
+{% endif %}
+
+<div class="section">
+  <h3>Top recipients</h3>
+
+  {% include "recipients/includes/result_table.html" with object_list=top_recipients hide_country=True %}
+
+  <p class="more_info">
+    {# <a href="{% url 'browse' country=country.code %}">View all recipients &raquo;</a> #}
+  </p>
+</div>
+
+{% endblock %}

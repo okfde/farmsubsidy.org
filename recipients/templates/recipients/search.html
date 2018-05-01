@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% load humanize %}
+
+{% block page_title %}
+  <h2>Search</h2>
+{% endblock %}
+
+{% block content %}
+
+    <form method="get" action=".">
+
+      <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="Your query" aria-label="Your query" value="{{ query }}" name="q">
+        <div class="input-group-append">
+          <button class="btn btn-secondary" type="submit">Search</button>
+        </div>
+      </div>
+    </form>
+
+    <h3>{{ total | intcomma }} Results</h3>
+
+    {% if paginator.num_pages > 1 %}
+      {% include "pagination.html" with page_obj=object_list %}
+    {% endif %}
+
+    {% if total > 0 %}
+      {% include "recipients/includes/result_table.html" with object_list=object_list %}
+    {% else %}
+      <p>No results found.</p>
+    {% endif %}
+
+    {% if paginator.num_pages > 1 %}
+      {% include "pagination.html" with page_obj=object_list %}
+    {% endif %}
+{% endblock %}
+
+{% block right %}
+  <div class="sidebar-widget">
+    <h3>
+      Countries
+    </h3>
+    <ul class="list-unstyled">
+    {% for country, count, selected in facets.country %}
+      <li>
+        {{ country }} {{ count }} {{ selected }}
+      </li>
+    {% endfor %}
+    </ul>
+  </div>
+{% endblock %}

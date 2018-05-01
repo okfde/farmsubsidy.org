@@ -1,0 +1,45 @@
+{% extends "recipients/base_country.html" %}
+
+{% load humanize %}
+{% load recipient_utils %}
+
+
+{% block title %}
+ Countries
+{% endblock %}
+
+{% block page_title %}
+  <h2>Browse data by country</h2>
+{% endblock %}
+
+{% block content %}
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Country</th>
+          <th>Oldest</th>
+          <th>Latest</th>
+          <th class="text-right">Total amount</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for country in countries %}
+        <tr>
+          <td>
+            <a href="{% url 'country' country.code %}">{{ country.name }}</a>
+          </td>
+          <td>
+            {{ country.min_year }}
+          </td>
+          <td>
+            {{ country.max_year }}
+          </td>
+          <td class="text-right">
+            {{ country.total_amount | intcomma_floatformat }}&nbsp;€<br/>
+            (~ {{ country.total_amount | intword }} Euro)
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+{% endblock %}

@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load recipient_utils %}
+
+{% block title %}
+  {{ recipient.name | format_list }} | {{ country.name }}
+{% endblock %}
+
+{% block page_title %}
+  <h2>{{ recipient.name }}</h2>
+{% endblock %}
+
+{% block extrameta %}
+  {% if recipient_total < 1000 %}
+    <meta name="robots" content="noindex"/>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  <div class="section">
+    <p>
+      {{ recipient.name }} is a recipient of farm subsidies in {% if recipient.town %}{{ recipient.location }},{% endif %} {{ country.name }}.
+    </p>
+    <p>
+      {{ recipient.name }} has received <strong>{{ recipient_total|intcomma_floatformat }}&nbsp;€</strong> in payments from the European Union.
+    </p>
+  </div>
+
+  <div class="section">
+    <h3>Details of payments</h3>
+
+    <table class="table">
+        <thead>
+          <tr>
+            <th>Year</th>
+            <th>Scheme</th>
+            <th class="money">Total</th>
+          </tr>
+        </thead>
+        {% for payment in payments %}
+          <tr>
+            <td>{{ payment.year.year }} </td>
+            <td>
+                {{ payment.scheme }}
+            </td>
+            <td class="money">
+              {{ payment.amount | intcomma_floatformat }}&nbsp;€
+            </td>
+          </tr>
+        {% endfor %}
+        <tr>
+          <td class="text-right" colspan="2">
+            <strong>Total:</strong>
+          </td>
+          <td class="money">
+            {{ recipient_total | intcomma_floatformat }}&nbsp;€
+          </td>
+        </tr>
+    </table>
+  </div>
+{% endblock %}
+
+{% block right %}
+  <h4>Address</h4>
+  <p>
+    {% if recipient.address %}{{ recipient.address }}<br />{% endif %}
+    {% if recipient.location %}{{ recipient.location }}<br />{% endif %}
+    {% if recipient.postcode %}{{ recipient.postcode }}{% endif %}
+  </p>
+{% endblock %}

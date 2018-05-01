@@ -1,14 +1,17 @@
 {% extends "base.html" %}
 {% load cache %}
 
+{% load recipient_utils %}
+
 {% block body_class %}onecol{% endblock %}
 {% block body_style %}home{% endblock %}
 
 {% block title %}Explore European Common Agricultural Policy farm subsidy payments{% endblock %}
 
+{% block page_title %}<h1>Welcome to farmsubsidy.org</h1>{% endblock %}
+
 {% block content %}
 
-    <h1>Welcome to farmsubsidy.org</h1>
     <p class="lead">
         The European Union spends around €59 billion a year on farm subsidies.<br/>
         This site tells you who receives the money.
@@ -32,8 +35,9 @@
 
      <p>
         <ul>
-            <li><a href="http://en.wikipedia.org/wiki/Common_Agricultural_Policy" target="_blank">Wikipedia - Common Agricultural Policy (CAP)</a></li>
-            <li><a href="https://www.google.de/search?tbm=nws&q=EU+Farm+Subsidies" target="_blank">Google News Search - &quot;EU Farm Subsidies&quot;</a></li>
+            <li>
+              <a href="http://en.wikipedia.org/wiki/Common_Agricultural_Policy" target="_blank">Wikipedia - Common Agricultural Policy (CAP)</a>
+            </li>
         </ul>
      </p>
 
@@ -42,16 +46,18 @@
 
 {% block right %}
     {% if top_eu %}
-        <div class="sidebar-widget">
-            <h3>All Time Top Recipients</h3>
-            <ul class="list-unstyled">
-                {% for r in top_eu %}
-                    <li>
-                      <a href="{{ r.get_absolute_url }}">{{ r.name }}</a>
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
+      <div class="sidebar-widget">
+        <h3>All Time Top Recipients</h3>
+        <ol>
+          {% for result in top_eu %}
+            <li>
+              <a href="{{ result | recipient_url }}">
+                {{ result.name | format_list }}
+              </a>
+            </li>
+          {% endfor %}
+        </ol>
+      </div>
     {% endif %}
 
     <div class="sidebar-widget">
