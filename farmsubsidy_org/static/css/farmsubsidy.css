@@ -141,6 +141,10 @@ a, a:hover {
   background-color: #fff;
 }
 
+.page-heading {
+  margin: 2rem 0;
+}
+
 .sidebar {
   background-color: #eee;
 }
