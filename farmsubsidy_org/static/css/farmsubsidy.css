@@ -18,6 +18,10 @@ a, a:hover {
   color: var(--main-color);
 }
 
+h3, h4 {
+  margin-top: 2rem;
+}
+
 .main {
   flex: 1 0 auto;
 }
@@ -161,7 +165,7 @@ a, a:hover {
   border-radius: 2px
 }
 
-.sidebar-widget h3 {
+.sidebar-widget h3:first-child {
   margin-top: 0;
 }
 
