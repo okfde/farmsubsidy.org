@@ -1,34 +1,36 @@
 {% load recipient_utils %}
 
-<table class="table">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Location</th>
-      {% if not hide_country %}<th>Country</th>{% endif %}
-      <th>Total amount</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for result in object_list %}
+<div class="table-responsive">
+  <table class="table">
+    <thead>
       <tr>
-        <td>
-          <a href="{{ result | recipient_url }}">
-            {{ result.name }}
-          </a>
-        </td>
-        <td>
-          {{ result.location }}, {{ result.postcode }}
-        </td>
-        {% if not hide_country %}
-          <td>
-            {{ result.country }}
-          </td>
-        {% endif %}
-        <td class="money">
-          {{ result.total_amount | intcomma_floatformat }}&nbsp;€
-        </td>
+        <th>Name</th>
+        <th>Location</th>
+        {% if not hide_country %}<th>Country</th>{% endif %}
+        <th class="text-right">Total amount</th>
       </tr>
-    {% endfor %}
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      {% for result in object_list %}
+        <tr>
+          <td>
+            <a href="{{ result | recipient_url }}">
+              {{ result.name }}
+            </a>
+          </td>
+          <td>
+            {{ result.location }}, {{ result.postcode }}
+          </td>
+          {% if not hide_country %}
+            <td>
+              {{ result.country }}
+            </td>
+          {% endif %}
+          <td class="money">
+            {{ result.total_amount | intcomma_floatformat }}&nbsp;€
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

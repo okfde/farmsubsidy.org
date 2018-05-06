@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 
 {% load humanize %}
+{% load recipient_utils %}
+
+{% block title %}Search for “{{ query }}”{% endblock %}
 
 {% block page_title %}
   <h2>Search</h2>
@@ -12,40 +15,74 @@
 
       <div class="input-group mb-3">
         <input type="text" class="form-control" placeholder="Your query" aria-label="Your query" value="{{ query }}" name="q">
+        {% for key, val in filters.items %}
+          <input type="hidden" name="{{ key }}" value="{{ val }}"/>
+        {% endfor %}
         <div class="input-group-append">
           <button class="btn btn-secondary" type="submit">Search</button>
         </div>
       </div>
+      {% if filters %}
+        <p>
+          Filters:
+          {% for key, val in filters.items %}
+            <a href="{% get_facet_link querydict key %}" class="badge badge-light">
+              {{ val }}&nbsp;&times;
+            </a>
+          {% endfor %}
+        </p>
+      {% endif %}
     </form>
 
-    <h3>{{ total | intcomma }} Results</h3>
-
-    {% if paginator.num_pages > 1 %}
-      {% include "pagination.html" with page_obj=object_list %}
-    {% endif %}
+    <h3>{{ total | intcomma }} results</h3>
 
     {% if total > 0 %}
       {% include "recipients/includes/result_table.html" with object_list=object_list %}
     {% else %}
       <p>No results found.</p>
     {% endif %}
-
-    {% if paginator.num_pages > 1 %}
-      {% include "pagination.html" with page_obj=object_list %}
+    {% if next_token %}
+      <nav>
+        <ul class="pagination">
+          <li class="page-item">
+            <a href="?next={{ next_token }}{{ getvars }}" class="page-link next">
+              <span>Next</span>
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
     {% endif %}
 {% endblock %}
 
 {% block right %}
   <div class="sidebar-widget">
+    <h3>Total sum of all matching recipients</h3>
+    <p>
+      {{ aggregations.total_amount.value | intcomma_floatformat }}&nbsp;€
+      <br/>
+      (&approx; {{ aggregations.total_amount.value | intword }}&nbsp;Euro)
+    </p>
+
     <h3>
       Countries
     </h3>
-    <ul class="list-unstyled">
-    {% for country, count, selected in facets.country %}
-      <li>
-        {{ country }} {{ count }} {{ selected }}
-      </li>
-    {% endfor %}
-    </ul>
+    <p>
+      Filter by recipient country (data origin)
+    </p>
+    {% include "recipients/includes/facet.html" with aggregation=aggregations.country %}
+
+    <h3>
+      Years
+    </h3>
+    <p>
+      Filter by recipients with payments in that year.
+    </p>
+    {% include "recipients/includes/facet.html" with aggregation=aggregations.year %}
+    <p class="text-muted mt-5">
+      Please note that these numbers only summarise the contents of our database and are <em>not</em> official statistics.
+    </p>
   </div>
+
+
 {% endblock %}

@@ -1,0 +1,25 @@
+{% load humanize %}
+{% load recipient_utils %}
+
+<ul class="list-unstyled">
+{% for bucket in aggregation %}
+  <li>
+    {% if not bucket.selected %}
+      <a href="{% get_facet_link querydict bucket.key bucket.value %}">
+    {% endif %}
+      {{ bucket.name }}
+    {% if not bucket.selected %}
+      </a>
+    {% endif %}
+    <small>
+      {{ bucket.count | intcomma }} <abbr title="recipients">recp.</abbr>{% if bucket.amount %},
+        {{ bucket.amount | intword }}&nbsp;€
+      {% endif %}
+    </small>
+    {% if bucket.selected %}
+      <a href="{% get_facet_link querydict bucket.key %}">
+        <span class="badge badge-pill badge-secondary">&times;</span>
+      </a>
+    {% endif %}
+  </li>
+{% endfor %}
