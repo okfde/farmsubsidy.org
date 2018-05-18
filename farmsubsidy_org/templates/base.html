@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>{% block title %}{{ title }}{% endblock %} | FarmSubsidy.org</title>
+    <title>{% block title %}EU CAP subsidy recipients{% endblock %} | FarmSubsidy.org</title>
 
     <meta name="description" content="FarmSubsidy shows who gets subsidies under the European Common Agricultural Policy">
     <meta name="author" content="">
@@ -83,7 +83,7 @@
       <div class="row content-row">
         <div class="content col-lg-8 col-md-8 col-sm-7">
           <header class="page-heading">
-            {% block page_title %}{% endblock %}
+            {% block page_title %}<h2>FarmSubsidy.org</h2>{% endblock %}
           </header>
           {% block error %}{% endblock %}
 
@@ -145,6 +145,14 @@
             </ul>
           </div>
         {% endblock %}
+      </div>
+      <hr/>
+      <div class="row text-small text-muted">
+        <div class="col-lg-12">
+          <p>
+            FarmSubsidy uses the privacy friendly Matomo<a href="https://matomo.org">Matamo</a> service for statistical analysis of this website's performance. We respect the DNT-Header and <a href="https://traffic.okfn.de/index.php?module=CoreAdminHome&amp;action=optOut&amp;language=en">you can opt out by clicking here</a>.
+          </p>
+        </div>
       </div>
     </div>
   </footer>
