@@ -115,7 +115,12 @@ def recipient_short(request, country, recipient_id):
     country = country.upper()
     if not recipient_id.startswith(country):
         raise Http404
-    recipient = Recipient.get(id=recipient_id)
+
+    try:
+        recipient = Recipient.get(id=recipient_id)
+    except ElasticsearchException:
+        return render(request, '503.html', {}, status=503)
+
     return redirect(get_recipient_url(recipient))
 
 
