@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "b61e30291a55b38b2be92a8b1551f54839bf1cd6d7476d17f2844a5bb9aea625"
+            "sha256": "7636204761d736ca6ee9249f8851e7563794d53c8e933660e819daf5175bdba8"
         },
         "host-environment-markers": {
             "implementation_name": "cpython",
@@ -11,7 +11,7 @@
             "platform_python_implementation": "CPython",
             "platform_release": "17.5.0",
             "platform_system": "Darwin",
-            "platform_version": "Darwin Kernel Version 17.5.0: Mon Mar  5 22:24:32 PST 2018; root:xnu-4570.51.1~1/RELEASE_X86_64",
+            "platform_version": "Darwin Kernel Version 17.5.0: Fri Apr 13 19:32:32 PDT 2018; root:xnu-4570.51.2~1/RELEASE_X86_64",
             "python_full_version": "3.6.5",
             "python_version": "3.6",
             "sys_platform": "darwin"
@@ -105,10 +105,10 @@
         },
         "python-dateutil": {
             "hashes": [
-                "sha256:3220490fb9741e2342e1cf29a503394fdac874bc39568288717ee67047ff29df",
-                "sha256:9d8074be4c993fbe4947878ce593052f71dac82932a677d49194d8ce9778002e"
+                "sha256:1adb80e7a782c12e52ef9a8182bebeb73f1d7e24e374397af06fb4956c8dc5c0",
+                "sha256:e27001de32f627c22380a688bcc43ce83504a7bc5da472209b4c70f02829f0b8"
             ],
-            "version": "==2.7.2"
+            "version": "==2.7.3"
         },
         "python-slugify": {
             "hashes": [
@@ -122,6 +122,13 @@
                 "sha256:c06425302f2cf668f1bba7a0a03f3c1d34d4ebeef2c72003da308b3947c7f749"
             ],
             "version": "==2018.4"
+        },
+        "raven": {
+            "hashes": [
+                "sha256:1c641e5ebc2d4185560608e253970ca0d4b98475f4edf67735015a415f9e1d48",
+                "sha256:95aecf76c414facaddbb056f3e98c7936318123e467728f2e50b3a66b65a6ef7"
+            ],
+            "version": "==6.8.0"
         },
         "six": {
             "hashes": [

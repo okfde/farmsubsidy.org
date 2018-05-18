@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'django.contrib.flatpages',
 
     'debug_toolbar',
+    'raven.contrib.django.raven_compat',
 
     'recipients.apps.RecipientsConfig'
 ]
@@ -183,16 +184,11 @@ DEFAULT_LOGGING = {
             'level': 'INFO',
             'class': 'logging.StreamHandler',
             'formatter': 'django.server',
-        },
-        'log_errors': {
-            'level': 'ERROR',
-            'filters': ['require_debug_false'],
-            'class': 'logging.StreamHandler'
         }
     },
     'loggers': {
         'django': {
-            'handlers': ['console', 'log_errors'],
+            'handlers': ['console'],
             'level': 'INFO',
         },
         'django.server': {
@@ -202,3 +198,15 @@ DEFAULT_LOGGING = {
         },
     }
 }
+
+import raven
+
+DJANGO_SENTRY_DSN = os.environ.get('DJANGO_SENTRY_DSN')
+
+if DJANGO_SENTRY_DSN:
+    RAVEN_CONFIG = {
+        'dsn': DJANGO_SENTRY_DSN,
+        # If you are using git, you can also automatically configure the
+        # release based on the git info.
+        'release': raven.fetch_git_sha(os.path.abspath(BASE_DIR)),
+    }
