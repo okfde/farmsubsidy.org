@@ -10,6 +10,7 @@ from .forms import SearchForm
 from .es_models import Recipient
 from .utils import (
     get_recipient_url, prepare_recipient_list, prepare_recipient,
+    slugify_recipient
 )
 
 
@@ -132,6 +133,9 @@ def recipient(request, country, recipient_id, slug):
     recipient = Recipient.get(id=recipient_id)
 
     prepare_recipient(recipient)
+
+    if slugify_recipient(recipient) != slug:
+        return redirect(get_recipient_url(recipient))
 
     similar = Recipient.search()
     similar = similar.query('more_like_this', like=[
