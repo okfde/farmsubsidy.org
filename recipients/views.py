@@ -2,8 +2,10 @@ import json
 
 from django.shortcuts import redirect, render, Http404
 from django.http import QueryDict
+from django.template import loader
 
 from elasticsearch_dsl import A
+from elasticsearch.exceptions import ElasticsearchException
 
 from .models import COUNTRY_CODES
 from .forms import SearchForm
@@ -130,7 +132,10 @@ def recipient(request, country, recipient_id, slug):
     if not recipient_id.startswith(country):
         raise Http404
 
-    recipient = Recipient.get(id=recipient_id)
+    try:
+        recipient = Recipient.get(id=recipient_id)
+    except ElasticsearchException:
+        return render(request, '503.html', {}, status=503)
 
     prepare_recipient(recipient)
 
