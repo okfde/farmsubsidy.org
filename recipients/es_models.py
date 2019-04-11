@@ -1,6 +1,6 @@
 from django.conf import settings
 from elasticsearch_dsl import (
-    DocType, Date, Nested, Double,
+    Document, Date, Nested, Double,
     analyzer, InnerDoc, Keyword, Text,
     Index
 )
@@ -9,9 +9,16 @@ from elasticsearch_dsl import connections
 
 connections.create_connection(hosts=[settings.ES_URL], timeout=20)
 
-eufs_analyzer = analyzer('eufs_analyzer',
+eufs_analyzer = analyzer(
+    'eufs_analyzer',
     tokenizer="standard",
     filter=["standard", "asciifolding", "lowercase"],
+)
+
+farmsubsidy_recipients = Index('farmsubsidy_recipients')
+farmsubsidy_recipients.settings(
+    number_of_shards=1,
+    number_of_replicas=0
 )
 
 
@@ -25,8 +32,10 @@ class Payment(InnerDoc):
     currency_original = Keyword()
 
 
-class Recipient(DocType):
+@farmsubsidy_recipients.document
+class Recipient(Document):
     country = Keyword()
+    slug = Keyword()
     name = Text(fields={'raw': Keyword()}, analyzer=eufs_analyzer)
 
     address = Text(analyzer=eufs_analyzer)
@@ -37,14 +46,10 @@ class Recipient(DocType):
 
     payments = Nested(Payment)
 
+    class Index:
+        name = 'farmsubsidy_recipients'
 
-farmsubsidy_recipients = Index('farmsubsidy_recipients')
-farmsubsidy_recipients.settings(
-    number_of_shards=1,
-    number_of_replicas=0
-)
 
-farmsubsidy_recipients.doc_type(Recipient)
 farmsubsidy_recipients.analyzer(eufs_analyzer)
 
 
