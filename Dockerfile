@@ -1,21 +1,17 @@
 FROM python:3.6
 
-# Install Python dependencies
-RUN pip install pipenv
-
-COPY Pipfile /code/
-COPY Pipfile.lock /code/
+COPY requirements.txt /code/
 
 WORKDIR /code
 
-RUN cd /code/ && pipenv install -d
+RUN cd /code/ && pip install -r requirements.txt
 
 COPY . /code
 
-RUN pipenv run ./manage.py collectstatic --noinput
+RUN python ./manage.py collectstatic --noinput
 
 ENV PYTHONPATH /code
 
 # Run the green unicorn
-CMD pipenv run gunicorn -w 4 -b 0.0.0.0:8040 --name farmsubsidy_gunicorn \
+CMD gunicorn -w 4 -b 0.0.0.0:8040 --name farmsubsidy_gunicorn \
   --log-level info --log-file /var/log/gunicorn.log farmsubsidy_org.wsgi:application
