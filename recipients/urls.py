@@ -15,8 +15,9 @@ def country_url(pattern, *args, **kwargs):
     lower case)
     """
     countries = [c for c in COUNTRY_CODES.keys()]
+    countries = countries + [c.lower() for c in countries]
     countries = "|".join(countries)
-    return re_path(r'^(?i)(?P<country>%s)/%s' % (countries, pattern), *args, **kwargs)
+    return re_path(r'^(?P<country>%s)/%s' % (countries, pattern), *args, **kwargs)
 
 
 urlpatterns = [
