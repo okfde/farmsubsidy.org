@@ -100,7 +100,8 @@ def country(request, country, year=None):
 
     prepare_recipient_list(top_recipients)
 
-    return render(request,
+    return render(
+        request,
         'recipients/country.html',
         {
             'year': year,
@@ -269,7 +270,7 @@ def search(request, search_map=False):
         } for x in response.aggregations.country.buckets],
         'total_amount': response.aggregations.total_amount
     }
-    print(json.dumps(s.to_dict()))
+
     return render(
         request, 'recipients/search.html',
         {
