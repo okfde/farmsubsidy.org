@@ -1,8 +1,6 @@
-import json
-
 from django.shortcuts import redirect, render, Http404
 from django.http import QueryDict
-from django.template import loader
+from django.views.decorators.cache import cache_page
 
 from elasticsearch_dsl import A
 from elasticsearch.exceptions import ElasticsearchException
@@ -16,6 +14,7 @@ from .utils import (
 )
 
 
+@cache_page(None)
 def home(request):
     top_eu = Recipient.search().sort('-total_amount')[:5].execute()
     return render(request, 'home.html', {
@@ -24,6 +23,7 @@ def home(request):
     })
 
 
+@cache_page(None)
 def countries(request):
     s = Recipient.search()
     a = A('nested', path='payments')
@@ -51,12 +51,16 @@ def countries(request):
             'max_year': country_agg['years']['buckets'][-1]['key_as_string'][:4],
         })
 
-    return render(request, 'recipients/countries.html',
+    return render(
+        request,
+        'recipients/countries.html',
         {
             'countries': countries,
-        })
+        }
+    )
 
 
+@cache_page(None)
 def country(request, country, year=None):
     """
     Provides all the variables for the country pages at, for example "/AT/"
