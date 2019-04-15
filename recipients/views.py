@@ -27,7 +27,11 @@ def home(request):
 def countries(request):
     s = Recipient.search()
     a = A('nested', path='payments')
-    by_country = a.bucket('per_country', 'terms', field='payments.country')
+    by_country = a.bucket(
+        'per_country', 'terms',
+        field='payments.country',
+        size=len(COUNTRY_CODES)
+    )
     by_country.metric(
         'years', 'date_histogram',
         field='payments.year',
@@ -160,7 +164,9 @@ def recipient(request, country, recipient_id, slug):
 
     prepare_recipient_list(similar)
 
-    return render(request, 'recipients/recipient.html',
+    return render(
+        request,
+        'recipients/recipient.html',
         {
             'recipient': recipient,
             'payments': recipient.payments,
@@ -221,7 +227,7 @@ def search(request, search_map=False):
                 'payments.year': filters['year']
             }}]}
         })
-    agg_country = A('terms', field='country')
+    agg_country = A('terms', field='country', size=len(COUNTRY_CODES))
     agg_year = A('nested', path='payments')
     agg_year_bucket = agg_year.bucket(
         'year', 'date_histogram',
