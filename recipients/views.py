@@ -215,8 +215,9 @@ def search(request, search_map=False):
         form = SearchForm(initial={'q': q})
 
         s = s.query("multi_match", query=q, type='cross_fields', fields=[
-            'name', 'location', 'address', 'postcode'
-        ])
+                'name', 'location', 'address', 'postcode'
+            ], operator="and",
+        )
 
     if 'country' in filters:
         s = s.filter('term', country=filters['country'])
