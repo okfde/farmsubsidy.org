@@ -214,7 +214,7 @@ def search(request, search_map=False):
     if q and len(q) > 2:
         form = SearchForm(initial={'q': q})
 
-        s = s.query("multi_match", query=q, fields=[
+        s = s.query("multi_match", query=q, type='cross_fields', fields=[
             'name', 'location', 'address', 'postcode'
         ])
 
