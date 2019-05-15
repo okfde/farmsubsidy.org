@@ -19,10 +19,10 @@
 {% block content %}
   <div class="section">
     <p>
-      {{ recipient.name }} is a recipient of farm subsidies from {{ country.name }}.
+      {{ recipient.name | list_first }} is a recipient of farm subsidies from {{ country.name }}.
     </p>
     <p>
-      {{ recipient.name }} has received <strong>{{ recipient_total|intcomma_floatformat }}&nbsp;€</strong> in payments from the European Union.
+      {{ recipient.name | list_format }} has received (at least) <strong>{{ recipient_total|intcomma_floatformat }}&nbsp;€</strong> in payments of farm subsidies from the European Union under <abbr title="Common Agricultural Policy">the CAP</abbr>.
     </p>
   </div>
 
@@ -78,9 +78,9 @@
   <div class="sidebar-widget">
     <h4>Address</h4>
     <p>
-      {% if recipient.address %}{{ recipient.address }}<br />{% endif %}
-      {% if recipient.location %}{{ recipient.location }}<br />{% endif %}
-      {% if recipient.postcode %}{{ recipient.postcode }}{% endif %}
+      {% if recipient.address %}{{ recipient.address | format_list }}<br />{% endif %}
+      {% if recipient.location %}{{ recipient.location | format_list }}<br />{% endif %}
+      {% if recipient.postcode %}{{ recipient.postcode | format_list }}{% endif %}
     </p>
   </div>
 {% endblock %}

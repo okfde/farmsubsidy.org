@@ -15,11 +15,11 @@
         <tr>
           <td>
             <a href="{{ result | recipient_url }}">
-              {{ result.name }}
+              {{ result.name | list_first }}
             </a>
           </td>
           <td>
-            {{ result.location }}, {{ result.postcode }}
+            {{ result.location | list_first }}, {{ result.postcode | list_first }}
           </td>
           {% if not hide_country %}
             <td>

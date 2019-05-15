@@ -4,7 +4,7 @@ from django import template
 from django.template.defaultfilters import floatformat
 from django.contrib.humanize.templatetags.humanize import intcomma
 
-from ..utils import get_recipient_url, flat_es
+from ..utils import get_recipient_url
 from ..models import COUNTRY_CODES
 
 register = template.Library()
@@ -16,8 +16,19 @@ def recipient_url(recipient):
 
 
 @register.filter
+def list_first(value):
+    if not isinstance(value, str) and value:
+        return value[0]
+    if not value:
+        return ''
+    return value
+
+
+@register.filter
 def format_list(value):
-    return flat_es(value)
+    if not isinstance(value, str):
+        return ', '.join(value)
+    return value
 
 
 @register.filter
