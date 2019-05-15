@@ -270,6 +270,7 @@ def search(request, search_map=False):
             'value': int(x['key_as_string'][:4]),
             'amount': x['amount']['value'],
             'count': x['doc_count'],
+            'count_label': 'records',
             'selected': int(x['key_as_string'][:4]) == filters.get('year')
         } for x in response.aggregations.year.year.buckets],
         'country': [{
@@ -277,6 +278,7 @@ def search(request, search_map=False):
             'name': COUNTRY_CODES[x['key']],
             'value': x['key'],
             'count': x['doc_count'],
+            'count_label': 'recipients',
             'selected': x['key'] == filters.get('country')
         } for x in response.aggregations.country.buckets],
         'total_amount': response.aggregations.total_amount
