@@ -39,8 +39,8 @@ def get_country_name(value):
 @register.filter
 def intcomma_word(value):
     if value >= 1_000_000:
-        return intcomma(value)
-    return intword(value)
+        return intword(value)
+    return intcomma_floatformat(value)
 
 
 @register.filter
