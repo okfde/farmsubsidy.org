@@ -12,8 +12,8 @@
       </a>
     {% endif %}
     <small>
-      {{ bucket.count | intcomma }} <abbr title="recipients">recp.</abbr>{% if bucket.amount %},
-        {{ bucket.amount | intword }}&nbsp;€
+      {{ bucket.count | intcomma }} <abbr title="payment records">recs.</abbr>{% if bucket.amount %},
+        {{ bucket.amount | intcomma_word }}&nbsp;€
       {% endif %}
     </small>
     {% if bucket.selected %}

@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 from django import template
 from django.template.defaultfilters import floatformat
-from django.contrib.humanize.templatetags.humanize import intcomma
+from django.contrib.humanize.templatetags.humanize import intcomma, intword
 
 from ..utils import get_recipient_url
 from ..models import COUNTRY_CODES
@@ -34,6 +34,13 @@ def format_list(value):
 @register.filter
 def get_country_name(value):
     return COUNTRY_CODES.get(value)
+
+
+@register.filter
+def intcomma_word(value):
+    if value >= 1_000_000:
+        return intcomma(value)
+    return intword(value)
 
 
 @register.filter

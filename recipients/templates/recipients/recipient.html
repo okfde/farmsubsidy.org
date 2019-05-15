@@ -22,7 +22,7 @@
       {{ recipient.name | list_first }} is a recipient of farm subsidies from {{ country.name }}.
     </p>
     <p>
-      {{ recipient.name | list_format }} has received (at least) <strong>{{ recipient_total|intcomma_floatformat }}&nbsp;€</strong> in payments of farm subsidies from the European Union under <abbr title="Common Agricultural Policy">the CAP</abbr>.
+      {{ recipient.name | format_list }} has received (at least) <strong>{{ recipient_total|intcomma_floatformat }}&nbsp;€</strong> in payments of farm subsidies from the European Union under <abbr title="Common Agricultural Policy">the CAP</abbr>.
     </p>
   </div>
 
