@@ -4,8 +4,9 @@ from django.urls import path, include
 
 
 urlpatterns = [
-    path('', include('recipients.urls')),
     path('admin/', admin.site.urls),
+    path('', include('recipients.urls')),
+    path('', include('django.contrib.flatpages.urls')),
 ]
 
 if settings.DEBUG:

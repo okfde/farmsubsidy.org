@@ -28,6 +28,4 @@ urlpatterns = [
     country_url(r'(?P<year>\d+)/$', country, name='country_year'),
     country_url(r'recipient/(?P<recipient_id>[^/]+)/$', recipient_short, name='recipient_short_view'),
     country_url(r'recipient/(?P<recipient_id>[^/]+)/(?P<slug>(.*))/', recipient, name='recipient_view'),
-    path('', include('django.contrib.flatpages.urls')),
-
 ]
