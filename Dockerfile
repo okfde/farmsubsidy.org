@@ -6,7 +6,12 @@ WORKDIR /code
 
 RUN cd /code/ && pip install -r requirements.txt
 
-COPY . /code
+# For identifying commit in sentry
+COPY .git /code/.git
+COPY manage.py /code/manage.py
+COPY farmsubsidy_org /code/farmsubsidy_org
+COPY recipients /code/recipients
+COPY db.sqlite3 /code/db.sqlite3
 
 RUN python ./manage.py collectstatic --noinput
 
