@@ -10,9 +10,15 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
+import logging
 import os
 
 import dj_database_url
+
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+from sentry_sdk.integrations.logging import LoggingIntegration
+
 
 
 def env(a, b=None):
@@ -53,7 +59,6 @@ INSTALLED_APPS = [
     'django.contrib.flatpages',
 
     'debug_toolbar',
-    'raven.contrib.django.raven_compat',
 
     'recipients.apps.RecipientsConfig'
 ]
@@ -199,14 +204,15 @@ DEFAULT_LOGGING = {
     }
 }
 
-import raven
 
 DJANGO_SENTRY_DSN = os.environ.get('DJANGO_SENTRY_DSN')
-
 if DJANGO_SENTRY_DSN:
-    RAVEN_CONFIG = {
-        'dsn': DJANGO_SENTRY_DSN,
-        # If you are using git, you can also automatically configure the
-        # release based on the git info.
-        'release': raven.fetch_git_sha(os.path.abspath(BASE_DIR)),
-    }
+    sentry_logging = LoggingIntegration(
+        level=logging.INFO,  # Capture info and above as breadcrumbs
+        event_level=logging.ERROR,  # Send errors as events
+    )
+    sentry_sdk.init(
+        dsn=DJANGO_SENTRY_DSN,
+        integrations=[sentry_logging, DjangoIntegration()],
+        traces_sample_rate=0.2,
+    )
