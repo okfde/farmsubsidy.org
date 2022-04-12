@@ -5,3 +5,5 @@ __pycache__
 logs/
 dumps/
 fs-env/
+.vscode/
+*.sqlite3
