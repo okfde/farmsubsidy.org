@@ -69,7 +69,7 @@ class Country(model.Country):
 
 COUNTRY_CODES = OrderedDict(
     [
-        ("EU", _("All Countries")),
+        ("search", _("All Countries")),
         ("AT", _("Austria")),
         ("BE", _("Belgium")),
         ("BG", _("Bulgaria")),

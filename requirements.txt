@@ -6,3 +6,5 @@ python-slugify
 sentry-sdk
 git+https://github.com/okfde/farmsubsidy-store.git
 django-debug-toolbar
+redis
+hiredis

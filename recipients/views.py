@@ -64,6 +64,7 @@ def recipient_short(request, country, recipient_id):
     return redirect(recipient.get_absolute_url())
 
 
+@cache_page(None)
 def recipient(request, country, recipient_id, slug):
     """
     View for recipient page.
@@ -97,6 +98,7 @@ def recipient(request, country, recipient_id, slug):
     )
 
 
+@cache_page(None)
 def search(request, search_map=False):
     ORDER_BY = "-amount_sum"
     PAGE_SIZE = 20
