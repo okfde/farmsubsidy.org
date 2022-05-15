@@ -19,6 +19,22 @@ services:
     env_file:
       - farmsubsidy.env
 
+  api:
+    build: .
+    restart: unless-stopped
+    command: "gunicorn -w 4 -b 0.0.0.0:5000 --name farmsubsidy_gunicorn_api \
+      --log-level info --log-file /var/log/gunicorn.log farmsubsidy_store.api:app"
+    volumes:
+      - ${DATA_ROOT:-.}/logs/gunicorn-api:/var/log
+    ports:
+      - 127.0.0.1:5000:5000
+    links:
+      - clickhouse
+    environment:
+      DATABASE_URI: clickhouse
+      LRU_QUERY_CACHE_SIZE: 1024000000
+      FLASK_DEBUG: 0
+
   clickhouse:
     image: clickhouse/clickhouse-server
     restart: unless-stopped
