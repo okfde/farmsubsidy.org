@@ -19,15 +19,16 @@
             </a>
           </td>
           <td>
-            {{ result.location | list_first }}, {{ result.postcode | list_first }}
+            {{ result.address | list_first }}
+            {# {{ result.location | list_first }}, {{ result.postcode | list_first }} #}
           </td>
           {% if not hide_country %}
             <td>
-              {{ result.country }}
+              {{ result.country | list_first | get_country_name }}
             </td>
           {% endif %}
           <td class="money">
-            {{ result.total_amount | intcomma_floatformat }}&nbsp;€
+            {{ result.amount_sum | intcomma_floatformat }}&nbsp;€
           </td>
         </tr>
       {% endfor %}

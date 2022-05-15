@@ -1,66 +1,32 @@
-from django.shortcuts import redirect, render, Http404
 from django.http import QueryDict
+from django.shortcuts import Http404, redirect, render
+from django.urls import reverse
+from django.utils.html import escape
 from django.views.decorators.cache import cache_page
+from farmsubsidy_store.aggregations import agg_by_country, agg_by_year, amount_sum
+from farmsubsidy_store.search import RecipientSearchView
 
-from elasticsearch_dsl import A
-from elasticsearch.exceptions import ElasticsearchException
-
-from .models import COUNTRY_CODES
 from .forms import SearchForm
-from .es_models import Recipient
-from .utils import (
-    get_recipient_url, prepare_recipient_list, prepare_recipient,
-    slugify_recipient
-)
+from .models import COUNTRY_CODES, Country, Recipient
 
 
 @cache_page(None)
 def home(request):
-    top_eu = Recipient.search().sort('-total_amount')[:5].execute()
-    return render(request, 'home.html', {
-        'countries': COUNTRY_CODES.values(),
-        'top_eu': top_eu
-    })
+    top_eu = Recipient.select().order_by("-amount_sum")[:5]
+    return render(
+        request, "home.html", {"countries": COUNTRY_CODES.items(), "top_eu": top_eu}
+    )
 
 
 @cache_page(None)
 def countries(request):
-    s = Recipient.search()
-    a = A('nested', path='payments')
-    by_country = a.bucket(
-        'per_country', 'terms',
-        field='payments.country',
-        size=len(COUNTRY_CODES)
-    )
-    by_country.metric(
-        'years', 'date_histogram',
-        field='payments.year',
-        interval='year'
-    )
-    by_country.metric(
-        'total_amount', 'sum',
-        field='payments.amount'
-    )
-    s.aggs.bucket('nested_payments', a)
-    s = s.source(False)
-    response = s.execute()
-    countries = []
-    country_buckets = response.aggregations.nested_payments.per_country.buckets
-    for country_agg in country_buckets:
-        countries.append({
-            'code': country_agg['key'],
-            'name': COUNTRY_CODES[country_agg['key']],
-            'total_amount': country_agg['total_amount']['value'],
-            'min_year': country_agg['years']['buckets'][0]['key_as_string'][:4],
-            'max_year': country_agg['years']['buckets'][-1]['key_as_string'][:4],
-        })
-
+    countries = Country.select()
     return render(
         request,
-        'recipients/countries.html',
+        "recipients/countries.html",
         {
-            'countries': countries,
-        }
+            "countries": countries,
+        },
     )
 
 
@@ -75,62 +41,27 @@ def country(request, country, year=None):
     - `years` The years that we have data for a given country
 
     """
-    country = country.upper()
-
-    s = Recipient.search()
-    s = s.filter('term', country=country)
+    country = Country.get(country.upper())
+    top_recipients = country.get_recipients().order_by("-amount_sum")[:5]
     if year is not None:
-        s = s.filter('nested', path='payments', query={
-            'bool': {'must': [{'term': {'payments.year': int(year)}}]}
-        })
-
-    a = A('nested', path='payments')
-    by_year = a.bucket(
-        'per_year', 'date_histogram',
-        field='payments.year',
-        interval='year'
-    )
-    by_year.metric(
-        'total_amount', 'sum',
-        field='payments.amount'
-    )
-    s.aggs.bucket('nested_payments', a)
-
-    s = s.sort('-total_amount')[:5]
-
-    top_recipients = s.execute()
-
-    year_amounts = [{
-        'year': int(x['key_as_string'][:4]),
-        'amount': x['total_amount']['value'],
-        'recipients': x['doc_count']
-    } for x in top_recipients.aggregations.nested_payments.per_year.buckets]
-
-    prepare_recipient_list(top_recipients)
+        top_recipients = top_recipients.where(year=year)
 
     return render(
         request,
-        'recipients/country.html',
+        "recipients/country.html",
         {
-            'year': year,
-            'top_recipients': top_recipients,
-            'year_amounts': year_amounts,
-            'country': COUNTRY_CODES[country]
-        }
+            "year": year,
+            "top_recipients": top_recipients,
+            "country": country,
+        },
     )
 
 
 def recipient_short(request, country, recipient_id):
-    country = country.upper()
-    if not recipient_id.startswith(country):
+    recipient = Recipient.get(recipient_id)
+    if recipient is None:
         raise Http404
-
-    try:
-        recipient = Recipient.get(id=recipient_id)
-    except ElasticsearchException:
-        return render(request, '503.html', {}, status=503)
-
-    return redirect(get_recipient_url(recipient))
+    return redirect(recipient.get_absolute_url())
 
 
 def recipient(request, country, recipient_id, slug):
@@ -142,159 +73,97 @@ def recipient(request, country, recipient_id, slug):
 
     """
 
-    country = country.upper()
-    if not recipient_id.startswith(country):
-        raise Http404
+    recipient = Recipient.get(recipient_id)
+    if recipient is None:
+        # redirect to search view to try to not break old urls:
+        return redirect(reverse("search") + slug)
 
-    try:
-        recipient = Recipient.get(id=recipient_id)
-    except ElasticsearchException:
-        return render(request, '503.html', {}, status=503)
+    if recipient.get_slug() != slug:
+        return redirect(recipient.get_absolute_url())
 
-    prepare_recipient(recipient)
-
-    if slugify_recipient(recipient) != slug:
-        return redirect(get_recipient_url(recipient))
-
-    similar = Recipient.search()
-    similar = similar.query('more_like_this', like=[
-        {'_id': recipient.meta.id}
-        ], fields=['name'], min_term_freq=1)
-    similar = similar.execute()
-
-    prepare_recipient_list(similar)
+    similar = Recipient.search(recipient)[:10]
+    similar = [r for r in similar if r.id != recipient.id]
 
     return render(
         request,
-        'recipients/recipient.html',
+        "recipients/recipient.html",
         {
-            'recipient': recipient,
-            'payments': recipient.payments,
-            'recipient_total': recipient.total_amount,
-            'country': COUNTRY_CODES[recipient.country],
-            'similar': similar
-        }
+            "recipient": recipient,
+            "payments": recipient.get_payments(),
+            "recipient_total": recipient.amount_sum,
+            "country": recipient.get_countries().first(),
+            "similar": similar,
+        },
     )
-
-
-def make_pagination(recipient):
-    return ','.join([str(recipient['total_amount']), recipient.meta.id])
-
-
-def parse_pagination(token):
-    parts = token.split(',', 1)
-    if len(parts) != 2:
-        return None
-    try:
-        parts[0] = float(parts[0])
-    except ValueError:
-        return None
-    return parts
 
 
 def search(request, search_map=False):
+    ORDER_BY = "-amount_sum"
     PAGE_SIZE = 20
-
     form = SearchForm()
-    q = request.GET.get('q', '')
-    filters = {}
+    search_params = {escape(k): escape(v) for k, v in request.GET.items() if v.strip()}
+    view_kwargs = {
+        **{"order_by": ORDER_BY},  # may be overwritten from GET param
+        **search_params,
+        **{"limit": PAGE_SIZE},  # ensure limit always
+    }
 
-    if request.GET.get('country', None) is not None:
-        if request.GET['country'] in COUNTRY_CODES:
-            filters['country'] = request.GET['country']
+    view = RecipientSearchView()
+    results = view.get_results(**view_kwargs)
+    q = view.q
+    if q:
+        form = SearchForm(initial={"q": q})
 
-    if request.GET.get('year', None) is not None:
-        try:
-            filters['year'] = int(request.GET['year'])
-        except ValueError:
-            pass
+    cleaned_query = QueryDict(request.GET.urlencode().encode("utf-8"), mutable=True)
 
-    s = Recipient.search()
+    cleaned_query.pop("p", None)
+    getvars = "&" + cleaned_query.urlencode()
 
-    if q and len(q) > 2:
-        form = SearchForm(initial={'q': q})
-
-        s = s.query("multi_match", query=q, type='cross_fields', fields=[
-                'name', 'location', 'address', 'postcode'
-            ], operator="and",
-        )
-
-    if 'country' in filters:
-        s = s.filter('term', country=filters['country'])
-
-    if 'year' in filters:
-        s = s.filter('nested', path='payments', query={
-            'bool': {'must': [{'term': {
-                'payments.year': filters['year']
-            }}]}
-        })
-    agg_country = A('terms', field='country', size=len(COUNTRY_CODES))
-    agg_year = A('nested', path='payments')
-    agg_year_bucket = agg_year.bucket(
-        'year', 'date_histogram',
-        field='payments.year',
-        interval='year'
-    )
-    agg_year_bucket.metric('amount', 'sum', field='payments.amount')
-    s.aggs.bucket('country', agg_country)
-    s.aggs.bucket('year', agg_year)
-    s.aggs.metric('total_amount', 'sum', field='total_amount')
-
-    if request.GET.get('next'):
-        next_token = parse_pagination(request.GET['next'])
-        if next_token is not None:
-            s = s.extra(search_after=next_token)
-    s = s.sort('-total_amount', '_id')
-
-    s = s[:PAGE_SIZE]
-    response = s.execute()
-
-    prepare_recipient_list(response)
-
-    cleaned_query = QueryDict(request.GET.urlencode().encode('utf-8'),
-                              mutable=True)
-
-    cleaned_query.pop('next', None)
-    cleaned_query.pop('prev', None)
-    getvars = '&' + cleaned_query.urlencode()
-
-    try:
-        next_token = make_pagination(response[-1])
-    except IndexError:
-        next_token = None
+    agg_params = view.params.copy()
+    if q:
+        search_str = view.search_cls(q).get_search_string()
+        agg_params.update(recipient_fingerprint__like=f"%{search_str}%")
 
     aggregations = {
-        'year': [{
-            'key': 'year',
-            'name': x['key_as_string'][:4],
-            'value': int(x['key_as_string'][:4]),
-            'amount': x['amount']['value'],
-            'count': x['doc_count'],
-            'count_label': 'records',
-            'selected': int(x['key_as_string'][:4]) == filters.get('year')
-        } for x in response.aggregations.year.year.buckets],
-        'country': [{
-            'key': 'country',
-            'name': COUNTRY_CODES[x['key']],
-            'value': x['key'],
-            'count': x['doc_count'],
-            'count_label': 'recipients',
-            'selected': x['key'] == filters.get('country')
-        } for x in response.aggregations.country.buckets],
-        'total_amount': response.aggregations.total_amount
+        "year": [
+            {
+                "key": "year",
+                "name": str(row["year"]),
+                "value": row["year"],
+                "amount": row["amount_sum"],
+                "count": row["total_recipients"],
+                "count_label": "records",
+                "selected": str(row["year"]) == view.params.get("year"),
+            }
+            for _, row in agg_by_year(**agg_params).iterrows()
+        ],
+        "country": [
+            {
+                "key": "country",
+                "name": COUNTRY_CODES[row["country"]],
+                "value": row["country"],
+                "count": row["total_recipients"],
+                "count_label": "recipients",
+                "selected": row["country"] == view.params.get("country"),
+            }
+            for _, row in agg_by_country(**agg_params).iterrows()
+        ],
+        "total_amount": amount_sum(**agg_params),
     }
 
     return render(
-        request, 'recipients/search.html',
+        request,
+        "recipients/search.html",
         {
-            'query': q,
-            'total': response.hits.total,
-            'form': form,
-            'next_token': next_token,
-            'object_list': response,
-            'filters': filters,
-            'aggregations': aggregations,
-            'getvars': getvars,
-            'querydict': cleaned_query,
-        }
+            "query": q or "",
+            "total": view.query.count,
+            "form": form,
+            "next_page": view.page + 1 if view.has_next else None,
+            "prev_page": view.page - 1 if view.has_prev else None,
+            "object_list": results,
+            "filters": view.params,
+            "aggregations": aggregations,
+            "getvars": getvars,
+            "querydict": cleaned_query,
+        },
     )

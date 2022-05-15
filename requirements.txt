@@ -2,8 +2,7 @@ django
 whitenoise
 gunicorn
 dj-database-url
-elasticsearch-dsl>=6.0.0,<7.0.0
 python-slugify
 sentry-sdk
-
+git+https://github.com/okfde/farmsubsidy-store.git
 django-debug-toolbar

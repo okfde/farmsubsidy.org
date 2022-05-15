@@ -63,9 +63,9 @@
     <div class="sidebar-widget">
         <h3>Browse by country</h3>
         <ul class="list-unstyled">
-        {% for country in countries %}
+        {% for code, name in countries %}
           <li>
-            <a href="{% url 'country' country.code %}">{{ country.name }}</a>
+            <a href="{% url 'country' code %}">{{ name }}</a>
           </li>
         {% endfor %}
         </ul>

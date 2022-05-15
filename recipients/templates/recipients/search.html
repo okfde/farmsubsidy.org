@@ -41,15 +41,25 @@
     {% else %}
       <p>No results found.</p>
     {% endif %}
-    {% if next_token %}
+    {% if prev_page or next_page %}
       <nav>
         <ul class="pagination">
+          {% if prev_page %}
           <li class="page-item">
-            <a href="?next={{ next_token }}{{ getvars }}" class="page-link next">
+            <a href="?p={{ prev_page }}{{ getvars }}" class="page-link prev">
+              <span aria-hidden="true">&laquo;</span>
+              <span>Prev</span>
+            </a>
+          </li>
+          {% endif %}
+          {% if next_page %}
+          <li class="page-item">
+            <a href="?p={{ next_page }}{{ getvars }}" class="page-link next">
               <span>Next</span>
               <span aria-hidden="true">&raquo;</span>
             </a>
           </li>
+          {% endif %}
         </ul>
       </nav>
     {% endif %}
@@ -59,9 +69,9 @@
   <div class="sidebar-widget">
     <h3>Total sum of all matching recipients</h3>
     <p>
-      {{ aggregations.total_amount.value | intcomma_floatformat }}&nbsp;€
+      {{ aggregations.total_amount | intcomma_floatformat }}&nbsp;€
       <br/>
-      (&approx; {{ aggregations.total_amount.value | intword }}&nbsp;Euro)
+      (&approx; {{ aggregations.total_amount | intword }}&nbsp;Euro)
     </p>
 
     <h3>
