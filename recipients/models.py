@@ -26,7 +26,8 @@ class Recipient(model.Recipient):
 
     @classmethod
     def search(cls, q: str) -> search.Query:
-        return search.RecipientNameSearch(q).query()
+        q = str(q)
+        return search.RecipientNameSearch(q).get_query()
 
 
 class Scheme(model.Scheme):

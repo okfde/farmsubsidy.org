@@ -4,7 +4,9 @@ from django.urls import reverse
 from django.utils.html import escape
 from django.views.decorators.cache import cache_page
 from farmsubsidy_store.aggregations import agg_by_country, agg_by_year, amount_sum
+from farmsubsidy_store.drivers import get_driver
 from farmsubsidy_store.search import RecipientSearchView
+from farmsubsidy_store.query import Query
 
 from .forms import SearchForm
 from .models import COUNTRY_CODES, Country, Recipient
@@ -12,7 +14,16 @@ from .models import COUNTRY_CODES, Country, Recipient
 
 @cache_page(None)
 def home(request):
-    top_eu = Recipient.select().order_by("-amount_sum")[:5]
+    top_ids_query = (
+        Query(driver=get_driver())
+        .select("recipient_id", "sum(amount) as amount_sum")
+        .group_by("recipient_id")
+        .order_by("-amount_sum")[:5]
+    )
+    top_ids = [row["recipient_id"] for row in top_ids_query]
+    top_eu = (
+        Recipient.select().where(recipient_id__in=top_ids).order_by("-amount_sum")[:5]
+    )
     return render(
         request, "home.html", {"countries": COUNTRY_CODES.items(), "top_eu": top_eu}
     )
@@ -104,6 +115,8 @@ def search(request, search_map=False):
     PAGE_SIZE = 20
     form = SearchForm()
     search_params = {escape(k): escape(v) for k, v in request.GET.items() if v.strip()}
+    if not search_params:  # at least filter down a bit
+        search_params = {"year": 2020}
     view_kwargs = {
         **{"order_by": ORDER_BY},  # may be overwritten from GET param
         **search_params,
