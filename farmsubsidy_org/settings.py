@@ -207,6 +207,13 @@ if DJANGO_SENTRY_DSN:
         traces_sample_rate=0.2,
     )
 
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    }
+}
+
 if not DEBUG:
     CACHES = {
         "default": {
