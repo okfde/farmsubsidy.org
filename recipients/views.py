@@ -17,6 +17,7 @@ def home(request):
     top_ids_query = (
         Query(driver=get_driver())
         .select("recipient_id", "sum(amount) as amount_sum")
+        .where(recipient_name__null=False)
         .group_by("recipient_id")
         .order_by("-amount_sum")[:5]
     )
