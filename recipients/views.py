@@ -6,6 +6,7 @@ from django.views.decorators.cache import cache_page
 from farmsubsidy_store.aggregations import agg_by_country, agg_by_year, amount_sum
 from farmsubsidy_store.drivers import get_driver
 from farmsubsidy_store.search import RecipientSearchView
+from farmsubsidy_store.model import Payment
 from farmsubsidy_store.query import Query
 
 from .forms import SearchForm
@@ -125,6 +126,9 @@ def search(request, search_map=False):
 
     view = RecipientSearchView()
     results = view.get_results(**view_kwargs)
+    payments = Payment.select().where(recipient_id__in=[x.id for x in results])
+    payment_results = payments.execute()  # .merge(results, on="recipient_id", how="left")
+
     q = view.q
     if q:
         form = SearchForm(initial={"q": q})
@@ -176,6 +180,7 @@ def search(request, search_map=False):
             "next_page": view.page + 1 if view.has_next else None,
             "prev_page": view.page - 1 if view.has_prev else None,
             "object_list": results,
+            "object_list_dict": payment_results.to_dict(orient="list"),
             "filters": view.params,
             "aggregations": aggregations,
             "getvars": getvars,
