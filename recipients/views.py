@@ -126,8 +126,9 @@ def search(request, search_map=False):
 
     view = RecipientSearchView()
     results = view.get_results(**view_kwargs)
-    payments = Payment.select().where(recipient_id__in=[x.id for x in results])
-    payment_results = payments.execute()  # .merge(results, on="recipient_id", how="left")
+
+    payments = Payment.select().where(recipient_id__in=[x.id for x in results], **view.params)
+    payment_results = payments.execute().drop(["pk"], 1)
 
     q = view.q
     if q:

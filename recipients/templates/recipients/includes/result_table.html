@@ -4,6 +4,7 @@
   <table class="table">
     <thead>
       <tr>
+        <th></th>
         <th>Name</th>
         <th>Location</th>
         {% if not hide_country %}<th>Country</th>{% endif %}
@@ -13,6 +14,9 @@
     <tbody>
       {% for result in object_list %}
         <tr>
+          <td>
+            <input type="checkbox" name="recipient_id" value="{{ result.id }}">
+          </td>
           <td>
             <a href="{{ result | recipient_url }}">
               {{ result.name | list_first }}
