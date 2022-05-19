@@ -26,7 +26,7 @@
         <p>
           Filters:
           {% for key, val in filters.items %}
-            <a href="{% get_facet_link querydict key %}" class="badge bg-light">
+            <a href="{% get_facet_link querydict key %}" class="badge bg-secondary">
               {{ val }}&nbsp;&times;
             </a>
           {% endfor %}
