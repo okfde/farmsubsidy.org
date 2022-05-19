@@ -12,12 +12,15 @@ from .forms import SearchForm
 from .models import COUNTRY_CODES, Country, Recipient
 
 
+NOT_NULL = {"recipient_name__null": False}
+
+
 @cache_page(None)
 def home(request):
     top_ids_query = (
         Query(driver=get_driver())
         .select("recipient_id", "sum(amount) as amount_sum")
-        .where(recipient_name__null=False)
+        .where(**NOT_NULL)
         .group_by("recipient_id")
         .order_by("-amount_sum")[:5]
     )
@@ -54,7 +57,9 @@ def country(request, country, year=None):
 
     """
     country = Country.get(country.upper())
-    top_recipients = country.get_recipients().order_by("-amount_sum")[:5]
+    top_recipients = (
+        country.get_recipients().where(**NOT_NULL).order_by("-amount_sum")[:5]
+    )
     if year is not None:
         top_recipients = top_recipients.where(year=year)
 
