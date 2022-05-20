@@ -40,9 +40,9 @@ ALLOWED_HOSTS = []
 if not DEBUG:
     ALLOWED_HOST = env("ALLOWED_HOST")
     if ALLOWED_HOST is not None:
-        ALLOWED_HOSTS = ["farmsubsidy.org", "farmsubsidy.openspending.org", "localhost"]
-    else:
         ALLOWED_HOSTS = [ALLOWED_HOST, "localhost"]
+    else:
+        ALLOWED_HOSTS = ["farmsubsidy.org", "farmsubsidy.openspending.org", "localhost"]
 
 INTERNAL_IPS = ["127.0.0.1"]
 
@@ -209,8 +209,8 @@ if DJANGO_SENTRY_DSN:
 
 
 CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    "default": {
+        "BACKEND": "django.core.cache.backends.dummy.DummyCache",
     }
 }
 
