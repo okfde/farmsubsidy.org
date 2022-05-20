@@ -20,9 +20,9 @@ services:
       - farmsubsidy.env
 
   api:
-    build: ./farmsubsidy-store
+    image: farmsubsidy-api
     restart: unless-stopped
-    command: "gunicorn -w 8 -k uvicorn.workers.UvicornWorker -b 127.0.0.1:5000 --name farmsubsidy_gunicorn_api \
+    command: "gunicorn -w 8 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:5000 --name farmsubsidy_gunicorn_api \
       --log-level info --log-file - farmsubsidy_store.api:app"
     volumes:
       - ${DATA_ROOT:-.}/logs/gunicorn-api:/var/log
