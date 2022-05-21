@@ -34,9 +34,10 @@ services:
     environment:
       DATABASE_URI: clickhouse
       LRU_QUERY_CACHE_SIZE: 1024000000
-      FLASK_DEBUG: 0
       REDIS_URL: redis://redis
-      FS_API_CACHE_TYPE: RedisCache
+      FS_API_CACHE: 1
+      TIMEOUT: 300
+      GRACEFUL_TIMEOUT: 300
 
   clickhouse:
     image: clickhouse/clickhouse-server
