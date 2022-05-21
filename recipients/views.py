@@ -121,8 +121,8 @@ def search(request, search_map=False):
     PAGE_SIZE = 20
     form = SearchForm()
     search_params = {escape(k): escape(v) for k, v in request.GET.items() if v.strip()}
-    if not search_params:  # at least filter down a bit
-        search_params = {"year": 2020}
+    if not [k for k in search_params if k != "p"]:  # at least filter down a bit
+        search_params.update(year=2020)
     view_kwargs = {
         **{"order_by": ORDER_BY},  # may be overwritten from GET param
         **search_params,

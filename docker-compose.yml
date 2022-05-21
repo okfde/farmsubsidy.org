@@ -2,7 +2,7 @@ services:
   backend:
     build: .
     restart: unless-stopped
-    command: "gunicorn -w 8 -b 127.0.0.1:8000 --name farmsubsidy_gunicorn \
+    command: "gunicorn -w 8 -b 0.0.0.0:8000 --name farmsubsidy_gunicorn \
       --log-level info --log-file /var/log/gunicorn.log farmsubsidy_org.wsgi:application"
     volumes:
       - ${DATA_ROOT:-.}/logs/gunicorn:/var/log
