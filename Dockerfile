@@ -1,4 +1,4 @@
-FROM python:3.6
+FROM python:3.10
 
 COPY requirements.txt /code/
 
@@ -18,5 +18,5 @@ RUN python ./manage.py collectstatic --noinput
 ENV PYTHONPATH /code
 
 # Run the green unicorn
-CMD gunicorn -w 4 -b 0.0.0.0:8040 --name farmsubsidy_gunicorn \
+CMD gunicorn -w 4 -b 0.0.0.0:8000 --name farmsubsidy_gunicorn \
   --log-level info --log-file /var/log/gunicorn.log farmsubsidy_org.wsgi:application

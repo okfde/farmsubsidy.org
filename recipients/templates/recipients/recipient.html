@@ -3,11 +3,11 @@
 {% load recipient_utils %}
 
 {% block title %}
-  {{ recipient.name | format_list }} | {{ country.name }}
+  {{ recipient.name | format_list }} | {{ country | get_country_name }}
 {% endblock %}
 
 {% block page_title %}
-  <h2>{{ recipient.name }}</h2>
+  <h2>{{ recipient.name | format_list }}</h2>
 {% endblock %}
 
 {% block extrameta %}
@@ -19,7 +19,7 @@
 {% block content %}
   <div class="section">
     <p>
-      {{ recipient.name | list_first }} is a recipient of farm subsidies from {{ country.name }}.
+      {{ recipient.name | list_first }} is a recipient of farm subsidies from {{ country | get_country_name }}.
     </p>
     <p>
       {{ recipient.name | format_list }} has received (at least) <strong>{{ recipient_total|intcomma_floatformat }}&nbsp;€</strong> in payments of farm subsidies from the European Union under <abbr title="Common Agricultural Policy">the CAP</abbr>.
@@ -39,9 +39,9 @@
           </thead>
           {% for payment in payments %}
             <tr>
-              <td>{{ payment.year.year }} </td>
+              <td><a href="{% url 'search' %}?year={{ payment.year }}">{{ payment.year }}</a></td>
               <td>
-                  {{ payment.scheme }}
+                <a href="{% url 'search' %}?scheme={{ payment.scheme }}">{{ payment.scheme }}</a>
               </td>
               <td class="money">
                 {{ payment.amount | intcomma_floatformat }}&nbsp;€
@@ -66,7 +66,7 @@
     {% for sim in similar %}
       <li>
         <a href="{{ sim | recipient_url }}">
-          {{ sim.name }}, {{ sim.location }}, {{ sim.postcode }}, {{ sim.country }}
+          {{ sim.name | list_first }}, {{ sim.address | list_first }}, {{ sim.country | list_first | get_country_name }}
         </a>
       </li>
     {% endfor %}

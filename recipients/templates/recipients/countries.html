@@ -36,8 +36,8 @@
             {{ country.max_year }}
           </td>
           <td class="text-right">
-            {{ country.total_amount | intcomma_floatformat }}&nbsp;€<br/>
-            (&approx; {{ country.total_amount | intword }} Euro)
+            {{ country.amount_sum | intcomma_floatformat }}&nbsp;€<br/>
+            (&approx; {{ country.amount_sum | intword }} Euro)
           </td>
         </tr>
       {% endfor %}

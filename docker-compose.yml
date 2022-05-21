@@ -1,27 +1,59 @@
-version: "2"
-
 services:
   backend:
     build: .
     restart: unless-stopped
-    command: "gunicorn -w 4 -b 0.0.0.0:8040 --name farmsubsidy_gunicorn \
+    command: "gunicorn -w 8 -b 0.0.0.0:8000 --name farmsubsidy_gunicorn \
       --log-level info --log-file /var/log/gunicorn.log farmsubsidy_org.wsgi:application"
     volumes:
-      - ./logs/:/var/log/
+      - ${DATA_ROOT:-.}/logs/gunicorn:/var/log
     ports:
-      - 127.0.0.1:8040:8040
+      - 127.0.0.1:8000:8000
     links:
-      - elasticsearch
+      - clickhouse
+      - redis
     environment:
-      FS_ELASTICSEARCH_URI: http://elasticsearch:9200/
+      DATABASE_URI: clickhouse
+      LRU_QUERY_CACHE_SIZE: 1024000000
+      REDIS_CACHE_URL: redis://redis
+      DJANGO_DEBUG: 0
     env_file:
       - farmsubsidy.env
 
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.1.2
+  api:
+    build: ./farmsubsidy-store
+    restart: unless-stopped
+    command: "gunicorn -w 8 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:5000 --name farmsubsidy_gunicorn_api \
+      --log-level info --log-file - farmsubsidy_store.api:app"
+    volumes:
+      - ${DATA_ROOT:-.}/logs/gunicorn-api:/var/log
+    ports:
+      - 127.0.0.1:5000:5000
+    links:
+      - clickhouse
+      - redis
+    environment:
+      DATABASE_URI: clickhouse
+      LRU_QUERY_CACHE_SIZE: 1024000000
+      REDIS_URL: redis://redis
+      FS_API_CACHE: 1
+      TIMEOUT: 300
+      GRACEFUL_TIMEOUT: 300
+
+  clickhouse:
+    image: clickhouse/clickhouse-server
     restart: unless-stopped
     volumes:
-      - ./volumes/elasticsearch-data:/usr/share/elasticsearch/data
-      - ./volumes/elasticsearch-log:/var/log
+      - ${DATA_ROOT:-.}/clickhouse-data:/var/lib/clickhouse
+      - ${DATA_ROOT:-.}/logs/clickhouse:/var/log/clickhouse-server
     ports:
-      - 127.0.0.1:9240:9200
+      - 127.0.0.1:19000:9000
+    ulimits:
+      nofile:
+        soft: "65536"
+        hard: "65536"
+
+  redis:
+    image: redis:alpine
+    restart: unless-stopped
+    expose:
+      - 6379

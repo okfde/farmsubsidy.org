@@ -7,3 +7,5 @@ dumps/
 fs-env/
 .vscode/
 *.sqlite3
+assets
+clickhouse-data

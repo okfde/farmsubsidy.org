@@ -41,16 +41,16 @@
         </tr>
       </thead>
       <tbody>
-        {% for year_amount in year_amounts %}
+        {% for year in country.get_years %}
           <tr>
             <td>
-              <a href="{% url 'country_year' country=country.code year=year_amount.year %}">
-                {{ year_amount.year }}
+              <a href="{% url 'country_year' country=country.code year=year %}">
+                {{ year }}
               </a>
             </td>
-            <td>{{ year_amount.recipients | intcomma }}</td>
+            <td>{{ year.total_recipients | intcomma }}</td>
             <td class="money">
-              {{ year_amount.amount | intcomma_floatformat }}&nbsp;€
+              {{ year.amount_sum | intcomma_floatformat }}&nbsp;€
             </td>
           </tr>
         {% endfor %}

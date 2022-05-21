@@ -1,11 +1,11 @@
 from __future__ import unicode_literals
 
 from django import template
-from django.template.defaultfilters import floatformat
 from django.contrib.humanize.templatetags.humanize import intcomma, intword
+from django.template.defaultfilters import floatformat
 
-from ..utils import get_recipient_url
 from ..models import COUNTRY_CODES
+from ..utils import get_recipient_url
 
 register = template.Library()
 
@@ -20,19 +20,20 @@ def list_first(value):
     if not isinstance(value, str) and value:
         return value[0]
     if not value:
-        return ''
+        return ""
     return value
 
 
 @register.filter
 def format_list(value):
     if not isinstance(value, str):
-        return ', '.join(value)
+        return ", ".join(value)
     return value
 
 
 @register.filter
 def get_country_name(value):
+    value = str(value)
     return COUNTRY_CODES.get(value)
 
 
@@ -55,21 +56,21 @@ def intcomma_floatformat(value, arg=2):
     val = intcomma(value)
     if DECIMAL_SEPARATOR not in val:
         if arg > 0:
-            val += '%s%s' % (DECIMAL_SEPARATOR, '0' * arg)
+            val += "%s%s" % (DECIMAL_SEPARATOR, "0" * arg)
     else:
         before_ds, after_ds = val.rsplit(DECIMAL_SEPARATOR, 1)
         if len(after_ds) > arg:
             after_ds = after_ds[:arg]
         elif len(after_ds) < arg:
-            after_ds += '0' * (arg - len(after_ds))
+            after_ds += "0" * (arg - len(after_ds))
         if arg > 0:
-            val = '%s%s%s' % (before_ds, DECIMAL_SEPARATOR, after_ds)
+            val = "%s%s%s" % (before_ds, DECIMAL_SEPARATOR, after_ds)
         else:
             val = before_ds
     return val
 
 
-@register.filter(name='listify')
+@register.filter(name="listify")
 def listify(value):
     return list(value)
 
@@ -80,4 +81,4 @@ def get_facet_link(querydict, key, value=None):
     qd.pop(key, None)
     if value is not None:
         qd[key] = value
-    return '?' + qd.urlencode()
+    return "?" + qd.urlencode()
